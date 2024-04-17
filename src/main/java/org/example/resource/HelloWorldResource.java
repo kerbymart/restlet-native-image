@@ -2,8 +2,9 @@ package org.example.resource;
 
 import org.restlet.resource.Get;
 import org.restlet.resource.ResourceException;
+import org.restlet.resource.ServerResource;
 
-public class HelloWorldResource extends org.restlet.resource.ServerResource {
+public class HelloWorldResource extends ServerResource {
     private String name;
 
     @Override
