@@ -12,8 +12,14 @@
         <!-- Project Main Class -->
         <main.class>org.example.Main</main.class>
 
+        <!-- Restlet -->
+        <restlet.version>2.4.3</restlet.version>
+
         <!-- Native Image -->
         <native.image.plugin.version>21.2.0</native.image.plugin.version>
+
+        <!-- Test -->
+        <junit.version>4.8.2</junit.version>
 
         <!-- Maven -->
         <maven.compiler.source>8</maven.compiler.source>
@@ -21,6 +27,51 @@
         <maven.shade.plugin.version>3.5.0</maven.shade.plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <dependencies>
+        <!--
+            Restlet Framework's Core Dependency:
+            Essential for creating RESTful web services using Restlet.
+        -->
+        <dependency>
+            <groupId>org.restlet.jee</groupId>
+            <artifactId>org.restlet</artifactId>
+            <version>${restlet.version}</version>
+        </dependency>
+
+        <!--
+            Restlet's Servlet Extension:
+            Bridges the Restlet framework with Java Servlets, facilitating
+            the use of HTTP connectors in a Servlet environment.
+        -->
+        <dependency>
+            <groupId>org.restlet.jee</groupId>
+            <artifactId>org.restlet.ext.servlet</artifactId>
+            <version>${restlet.version}</version>
+        </dependency>
+
+        <!--
+            Restlet's Standalone HTTP Connectors:
+            Enables Restlet applications to run as standalone applications
+            by leveraging simple framework-based HTTP connectors.
+        -->
+        <dependency>
+            <groupId>org.restlet.jse</groupId>
+            <artifactId>org.restlet.ext.simple</artifactId>
+            <version>${restlet.version}</version>
+        </dependency>
+
+        <!--
+            JUnit:
+            A simple framework to write repeatable tests.
+        -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
@@ -62,6 +113,33 @@
                     </filters>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.2.0</version> <!-- Ensure you're using a recent version -->
+                <configuration>
+                    <mainClass>${main.class}</mainClass>
+                    <arguments>
+                        <argument>-agentlib:native-image-agent=config-output-dir=target/classes/META-INF/native-image</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
+
+            <!--
+            Surefire Plugin: Configures the test runner for the build.
+                Added the native image to operate on tests.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.20.1</version>
+                <configuration>
+                    <argLine>
+                        -agentlib:native-image-agent=config-output-dir=target/classes/META-INF/native-image
+                    </argLine>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -95,6 +173,8 @@
                                 <buildArg>-J-Xmx16g</buildArg>
                                 <!-- Include all resources -->
                                 <buildArg>-H:IncludeResources=.*\.*$</buildArg>
+                                <buildArg>-H:+AllowIncompleteClasspath</buildArg>
+                                <buildArg>-H:ReflectionConfigurationFiles=${project.build.directory}/classes/META-INF/native-image/reflect-config.json</buildArg>
                             </buildArgs>
                         </configuration>
                     </plugin>
@@ -102,4 +182,23 @@
             </build>
         </profile>
     </profiles>
+
+    <repositories>
+        <repository>
+            <id>central</id>
+            <name>Central Repository</name>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+        <repository>
+            <id>maven-restlet</id>
+            <name>Restlet repository</name>
+            <url>https://maven.restlet.talend.com</url>
+        </repository>
+        <!-- Needed by ApiSpark due for  RAML dependency -->
+        <repository>
+            <id>mulesoft-releases</id>
+            <name>MuleSoft Releases Repository</name>
+            <url>https://repository-master.mulesoft.org/releases/</url>
+        </repository>
+    </repositories>
 </project>

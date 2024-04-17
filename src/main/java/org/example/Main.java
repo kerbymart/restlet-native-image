@@ -1,17 +1,31 @@
 package org.example;
 
+import org.example.resource.HelloWorldResource;
+import org.restlet.Application;
+import org.restlet.Component;
+import org.restlet.Restlet;
+import org.restlet.data.Protocol;
+import org.restlet.routing.Router;
+
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class Main {
-    public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+public class Main extends Application{
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
-        }
+    private static final int HTTP_PORT = 8080;
+
+    public static void main(final String[] args) throws Exception {
+        // Set up and start the main application component, binding it to an HTTP server on port 8080.
+        Component component = new Component();
+        component.getServers().add(Protocol.HTTP, HTTP_PORT);
+        component.getDefaultHost().attach("", new Main());
+        component.start();
+    }
+
+    @Override
+    public Restlet createInboundRoot() {
+
+        Router router = new Router(getContext());
+        router.attach("/hello", HelloWorldResource.class);
+        return router;
     }
 }
