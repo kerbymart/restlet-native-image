@@ -47,7 +47,6 @@ public class MainTest {
 
             LOG.info("Response: " + response);
 
-            // Check if the response indicates an error in deserialization
             Assert.assertTrue("The response should indicate an error occurred.", response.contains("hello, world"));
         } catch (Exception e) {
             fail("An exception occurred: " + e.getMessage());
