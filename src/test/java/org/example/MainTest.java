@@ -34,6 +34,16 @@ public class MainTest {
         component.stop();
     }
 
+    @Test
+    public void testMainMethod() throws Exception {
+        // Prepare arguments if needed
+        String[] args = {/* arguments if required */};
+        // Call the main method
+        Main.main(args);
+        // Assertions to validate the component's state, if possible
+        // e.g., assertThat(Main.getComponent().isStarted(), is(true));
+    }
+
     /**
      * Test to exercise the hello resource to generate the native image configuration files
      * under the target/classes/META-INF/native-image directory.
